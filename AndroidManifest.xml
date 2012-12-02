@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="jp.marijuana.ISTweak"
+      android:versionCode="94"
+      android:versionName="0.9.4">
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	
+	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4" />
+	
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".ISTweakActivity"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+		<activity android:name="AppList"></activity>
+        <activity android:name="OverClock"></activity>
+        <activity android:name="CompCache"></activity>
+        <activity android:name="Zram"></activity>
+        <receiver android:name=".RootSwitchWidgetProvider" android:label="@string/app_name"  android:process=":remote" android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			</intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget" />
+        </receiver>
+        <service android:name="RootSwitchService" android:process=":remote" android:exported="false">
+            <intent-filter>
+                <action android:name="jp.marijuana.ISTweak.CHANGE" />
+            </intent-filter>
+        </service>
+        <receiver android:enabled="true" android:name=".autostart" android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</receiver>
+    </application>
+</manifest>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+
+     <EditText
+        android:id="@+id/int_vdd"
+        android:layout_height="wrap_content"
+        android:layout_width="100dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:scrollHorizontally="true"
+        android:autoText="false"
+        android:capitalize="none"
+        android:digits="0123456789"
+        android:inputType="number"
+		android:maxLength="4"
+		android:maxLines="1"
+        android:gravity="fill_horizontal"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+     />
+     <TextView 
+     	android:layout_width="wrap_content" 
+     	android:layout_height="wrap_content" 
+     	android:text="mV" 
+     	android:id="@+id/textView1" 
+     	android:textAppearance="?android:attr/textAppearanceMedium"
+     />
+
+
+</LinearLayout>

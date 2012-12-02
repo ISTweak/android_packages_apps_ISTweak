@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources>
+<resources>
+    <string name="app_name">ISTweak</string>
+    <string name="Description">このアプリケーションは、/sbin/auがインストールされていないと使用できません。</string>
+    <string name="btn_DelSu">suコマンドを無効にします</string>
+    <string name="btn_PutSu">suコマンドを有効にします</string>
+    <string name="btn_AppList">アプリケーション凍結</string>
+    <string name="btn_Market">マーケット偽装</string>
+    <string name="btn_Reboot">再起動</string>
+    <string name="btn_LcdDensity">解像度変更</string>
+    <string name="btn_Tethering">テザリング有効化</string>
+    <string name="btn_CacheClear">キャッシュクリア</string>
+    <string name="btn_OverClock">オーバクロック</string>
+    <string name="EnableSu">suコマンドが有効になりました</string>
+    <string name="DisableSu">suコマンドを無効にしました</string>
+    <string name="EnableSuSubject">suコマンドが有効です</string>
+    <string name="EnableSuDesc">一部のアプリケーションで「不正な～」が出る場合があります</string>
+    
+    <string name="AppWaitAction">読込中。。。</string>
+    <string name="ActionDefAppDisable">アプリケーションの凍結をします</string>
+    <string name="ActionDefAppDesc">青字＝無効／黒字＝有効</string>
+    <string name="ToDelete">を無効にしますか？</string>
+    <string name="ToReturn">を有効にしますか？</string>
+    <string name="DeleteConfirm">確認</string>
+    <string name="EnableAction">有効にする</string>
+    <string name="DisableAction">無効にする</string>
+    <string name="Cancel">キャンセル</string>
+    <string name="DataDir">/data/app</string>
+    <string name="SystemDir">/system/app</string>
+    <string name="SelectDirTittle">ディレクトリ選択</string>
+    
+    <string name="ChangeAction">設定する</string>
+    
+    <string name="MARKET_AU">庭(44054)</string>
+    <string name="MARKET_DOCOMO">茸(44010)</string>
+    <string name="MARKET_SOFTBANK">禿(44020)</string>
+    <string name="MARKET_EMOBILE">芋(44000)</string>
+    <string name="MARKET_TMobile">米(310260)</string>
+    <string name="MARKET_Empty">空</string>
+    <string name="SELECT_CA">キャリアを選択</string>
+    <string name="MARKET_DebugOn">デバッグ有効</string>
+    <string name="MARKET_DebugOff">デバッグ無効</string>
+    
+    <string name="RebootNormal">ブート</string>
+	<string name="RebootRecovery">リカバリー</string>
+    <string name="RebootMode">再起動モード</string>
+    
+    <string name="ScreenDPITitle">DPIの値を入力してください</string>
+    
+    <string name="CACHE_CLEAR">キャッシュクリア</string>
+    <string name="CACHE_CLEAR_DESC">/data/cacheと/data/dalvik-cacheをクリアします</string>
+    <string name="CLEAR">クリア</string>
+    
+    <string name="Str_OverClock">オーバークロック</string>
+    <string name="ClockSetting">クロック設定</string>
+    <string name="MinClock">最小クロック</string>
+    <string name="MaxClock">最大クロック</string>
+    <string name="KARA">～</string>
+    <string name="Scaling">スケーリング</string>
+    <string name="Scheduler">スケジューラー</string>
+    <string name="ChkBoot">起動時有効</string>
+	<string name="SettingEnd">設定しました。</string>
+    <string name="SettingVddLevel">VDDの設定</string>
+    <string name="SelectVddLevel">設定するクロックの選択</string>
+    <string name="Save_VDD">"VDDの設定を保存する"</string>
+    
+    <string name="Str_CompCache">compcache</string>
+    <string name="CompCacheSettings">compcacheの設定</string>
+    <string name="Str_Swappiness">swappiness</string>
+    <string name="Str_Compsize">compcacheのサイズ</string>
+    <string name="DelCompSize">設定を削除する</string>
+    <string name="Str_CompsizeL">compcacheのサイズ(%)</string>
+
+    <string name="btn_LifeLogTri">LifeLog無効</string>
+    <string name="btn_LifeLogRec">LifeLog有効</string>
+
+    <string name="Str_Zram">Zram</string>
+    <string name="ZramSettings">Zramの設定</string>
+    <string name="Str_Zramsize">Zramのサイズ</string>
+    <string name="str_exit">終了</string>
+    <string name="str_ToReboot">再起動後に有効になります</string>
+</resources>

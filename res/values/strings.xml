@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources>
+<resources>
+    <string name="app_name">ISTweak</string>
+    <string name="Description">This application cannot be used unless /sbin/au is installed.</string>
+    <string name="btn_DelSu">Disable su</string>
+    <string name="btn_PutSu">Enable su</string>
+    <string name="btn_AppList">Application List</string>
+    <string name="btn_Market">Market Impersonation</string>
+    <string name="btn_Reboot">Reboot</string>
+    <string name="btn_LcdDensity">Resolution Change</string>
+    <string name="btn_Tethering">Tethering Menu</string>
+    <string name="btn_CacheClear">Clear Cache</string>
+    <string name="btn_OverClock">OverClock</string>
+    <string name="EnableSu">su has been enabled</string>
+    <string name="DisableSu">su has been disabled</string>
+    <string name="EnableSuSubject">su is valid</string>
+    <string name="EnableSuDesc">Warning may be displayed with some applications</string>
+    
+    <string name="AppWaitAction">Reading&#8230;</string>
+    <string name="ActionDefAppDisable">Enable or disable the applications</string>
+    <string name="ActionDefAppDesc">Blue=disabled / black=enabled</string>
+    <string name="ToDelete">Do you want to disable?</string>
+    <string name="ToReturn">Do you want to enable?</string>
+    <string name="DeleteConfirm">Delete? Confirmation</string>
+    <string name="EnableAction">Enable</string>
+    <string name="DisableAction">Disable</string>
+    <string name="Cancel">Cancel</string>
+    
+    <string name="DataDir">/data/app</string>
+    <string name="SystemDir">/system/app</string>
+    <string name="SelectDirTittle">Select Directory</string>
+    
+    <string name="ChangeAction">Set</string>
+    
+    <string name="MARKET_AU">KDDI(44054)</string>
+    <string name="MARKET_DOCOMO">Docomo(44010)</string>
+    <string name="MARKET_SOFTBANK">Softbank(44020)</string>
+    <string name="MARKET_EMOBILE">Emobile(44000)</string>
+    <string name="MARKET_TMobile">TMobile(310260)</string>
+    <string name="MARKET_Empty">Empty</string>
+    <string name="SELECT_CA">Select Carrier</string>
+    <string name="MARKET_DebugOn">Enable debug</string>
+    <string name="MARKET_DebugOff">Disable debug</string>
+    
+    <string name="RebootNormal">Normal</string>
+	<string name="RebootRecovery">Recovery</string>
+    <string name="RebootMode">Reboot mode</string>
+    
+    <string name="ScreenDPITitle">Enter DPI Value</string>
+    
+    <string name="CACHE_CLEAR">Clear Cache</string>
+    <string name="CACHE_CLEAR_DESC">/data/cache and /data/dalvik-cache will be cleared</string>
+    <string name="CLEAR">Clear</string>
+    
+    <string name="Str_OverClock">OverClock</string>
+    <string name="ClockSetting">Clock settings</string>
+    <string name="MinClock">minimum clock</string>
+    <string name="MaxClock">maximum clock</string>
+    <string name="KARA">to</string>
+    <string name="Scaling">Scaling</string>
+    <string name="Scheduler">Scheduler</string>
+    <string name="ChkBoot">on boot</string>
+	<string name="SettingEnd">It set up.</string>
+    <string name="SettingVddLevel">VDD settings</string>
+    <string name="SelectVddLevel">Select clock</string>
+    <string name="Save_VDD">VDD settings is saved</string>
+    
+    <string name="Str_CompCache">compcache</string>
+    <string name="CompCacheSettings">compcache settings</string>
+    <string name="Str_Swappiness">swappiness</string>
+    <string name="Str_Compsize">size of compcache</string>
+    <string name="DelCompSize">clear settings</string>
+    <string name="Str_CompsizeL">size of compcache(%)</string>
+    
+    <string name="btn_LifeLogTri">Enable　LifeLog</string>
+    <string name="btn_LifeLogRec">Disable　LifeLog</string>
+    
+        <string name="Str_Zram">Zram</string>
+    <string name="ZramSettings">Zram settings</string>
+    <string name="Str_Zramsize">size of Zram</string>
+    <string name="str_exit">EXIT</string>
+    <string name="str_ToReboot">Please reboot</string>
+</resources>

@@ -49,6 +49,9 @@ public class CacheClear {
 						"if " + ISTweakActivity.cmdPareL + " -d /data/cache/ " + ISTweakActivity.cmdPareR + " ; then" + "\n" +
 						ISTweakActivity.cmdRm + " -rf /data/cache/*" + "\n" +
 						"fi" + "\n";
+				if ( ISTweakActivity.Model.equals("IS11PT") ) {
+					cmd += ISTweakActivity.cmdRm + " -rf /data/bugreports/*" + "\n";
+				}
 				NativeCmd.ExecuteCmdAlert(ctx, cmd, true);
 			}});
 		confirm.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener(){

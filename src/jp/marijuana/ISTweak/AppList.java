@@ -67,7 +67,7 @@ public class AppList extends Activity  implements Runnable {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 		}
-		handler.sendEmptyMessage(0);
+		mhandler.sendEmptyMessage(0);
 	}
 	
 	private void ShowWait(){
@@ -79,7 +79,7 @@ public class AppList extends Activity  implements Runnable {
 		thread.start();
 	}
 
-	private Handler handler = new Handler() {
+	private Handler mhandler = new Handler() {
 		public void handleMessage(Message msg){
 			getAppList();
 			waitDialog.dismiss();
@@ -126,6 +126,7 @@ public class AppList extends Activity  implements Runnable {
 	 * アイコンサイズの変更
 	 * http://www.saturn.dti.ne.jp/npaka/android/HomeEx/index.html よりコピペしました
 	 */
+	@SuppressWarnings("deprecation")
 	private Drawable resizeIcon(Drawable icon) {
 		//標準アイコンサイズの取得
 		Resources res = getResources();

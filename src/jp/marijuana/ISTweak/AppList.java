@@ -126,7 +126,6 @@ public class AppList extends Activity  implements Runnable {
 	 * アイコンサイズの変更
 	 * http://www.saturn.dti.ne.jp/npaka/android/HomeEx/index.html よりコピペしました
 	 */
-	@SuppressWarnings("deprecation")
 	private Drawable resizeIcon(Drawable icon) {
 		//標準アイコンサイズの取得
 		Resources res = getResources();
@@ -246,7 +245,7 @@ public class AppList extends Activity  implements Runnable {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							StringBuilder res = new StringBuilder();
-							NativeCmd.runScript(AppList.this, "pm disable " + item.getBodyText(), res, 0, true);
+							NativeCmd.runScript(AppList.this, "pm disable " + item.getBodyText(), res, 5000, true);
 							ISTweakActivity.alert(AppList.this, res.toString());
 						}});
 				} else if (pm.getApplicationEnabledSetting(item.getBodyText())== 2) {
@@ -256,7 +255,7 @@ public class AppList extends Activity  implements Runnable {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							StringBuilder res = new StringBuilder();
-							NativeCmd.runScript(AppList.this, "pm enable " + item.getBodyText(), res, 0, true);
+							NativeCmd.runScript(AppList.this, "pm enable " + item.getBodyText(), res, 5000, true);
 							ISTweakActivity.alert(AppList.this, res.toString());
 						}});
 				}

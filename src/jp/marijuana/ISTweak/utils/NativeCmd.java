@@ -15,7 +15,6 @@ import java.io.OutputStreamWriter;
 
 import jp.marijuana.ISTweak.ISTweakActivity;
 
-
 import android.content.Context;
 import android.util.Log;
 
@@ -98,17 +97,13 @@ public class NativeCmd {
 	{
 		OutputStream localOutputStream = Runtime.getRuntime().exec(NativeCmd.au).getOutputStream();
 		int i = paramArrayOfString.length;
-		for (int j = 0; ; j++) {
-			if (j >= i) {
-				localOutputStream.close();
-				return;
-			}
+		for (int j = 0; j < i; j++) {
 			localOutputStream.write(paramArrayOfString[j].getBytes());
 		}
+		localOutputStream.close();
 	}
 
-	
-	/**
+ 	/**
 	 * ファイルを1行読み込み
 	 * @param fn ファイル名
 	 * @return

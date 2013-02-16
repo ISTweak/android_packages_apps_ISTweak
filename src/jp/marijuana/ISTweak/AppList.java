@@ -244,9 +244,7 @@ public class AppList extends Activity  implements Runnable {
 					alert.setPositiveButton(R.string.DisableAction, new DialogInterface.OnClickListener(){  
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							StringBuilder res = new StringBuilder();
-							NativeCmd.runScript(AppList.this, "pm disable " + item.getBodyText(), res, 5000, true);
-							ISTweakActivity.alert(AppList.this, res.toString());
+							NativeCmd.ExecuteCmdAlert(AppList.this, "pm disable " + item.getBodyText(), true);
 						}});
 				} else if (pm.getApplicationEnabledSetting(item.getBodyText())== 2) {
 					//有効ボタン
@@ -254,9 +252,7 @@ public class AppList extends Activity  implements Runnable {
 					alert.setNeutralButton(R.string.EnableAction, new DialogInterface.OnClickListener(){
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							StringBuilder res = new StringBuilder();
-							NativeCmd.runScript(AppList.this, "pm enable " + item.getBodyText(), res, 5000, true);
-							ISTweakActivity.alert(AppList.this, res.toString());
+							NativeCmd.ExecuteCmdAlert(AppList.this, "pm enable " + item.getBodyText(), true);
 						}});
 				}
 				//キャンセルボタン

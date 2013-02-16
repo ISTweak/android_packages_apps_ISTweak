@@ -72,8 +72,8 @@
     <string name="DelCompSize">設定を削除する</string>
     <string name="Str_CompsizeL">compcacheのサイズ(%)</string>
 
-    <string name="btn_LifeLogTri">LifeLog無効</string>
-    <string name="btn_LifeLogRec">LifeLog有効</string>
+    <string name="btn_LifeLogTri">LifeLog無効にする</string>
+    <string name="btn_LifeLogRec">LifeLog有効にする</string>
 
     <string name="Str_Zram">Zram</string>
     <string name="ZramSettings">Zramの設定</string>

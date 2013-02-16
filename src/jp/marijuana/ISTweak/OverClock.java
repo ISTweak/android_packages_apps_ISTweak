@@ -6,10 +6,8 @@ package jp.marijuana.ISTweak;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -211,13 +209,13 @@ public class OverClock extends Activity {
 	 * 保存
 	 */
 	private void saveStat() {
-		getAllBlockDevice();
 		String cmd = "echo " + String.valueOf(makeMinFreq()) + " > " + scaling_min_freq + "\n" +
 					 "echo " + String.valueOf(makeMaxFreq()) + " > " + scaling_max_freq + "\n" +
 					 "echo " + makeScaling() + " > " + scaling_governor + "\n" +
 					 getAllBlockDevice() +
 				"";
-		if (NativeCmd.ExecuteCmdAlert(this, cmd, true)) {
+		String[] ret = NativeCmd.runScript(this, cmd, true);
+		if (ret[2].length() == 0) {
 			Log.i("ISTweak", "set cpu freq and scaling");
 		}
 		
@@ -227,7 +225,7 @@ public class OverClock extends Activity {
 		
 		CheckBox chkbox = (CheckBox) findViewById(4);
 		if (chkbox.isChecked()) {
-			createBoot(cmd);
+			NativeCmd.createExecFile(cmd, mydir + "/boot.sh");
 			Log.i("ISTweak", "make: boot.sh");
 		} else {
 			File file = new File(mydir + "/boot.sh");
@@ -251,24 +249,6 @@ public class OverClock extends Activity {
 		}
 		
 		Toast.makeText(this, R.string.SettingEnd, Toast.LENGTH_SHORT).show();
-	}
-	
-	/**
-	 * boot.shの作成
-	 * @param cmd
-	 */
-	private void createBoot(String cmd) {
-		try {
-			final OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(mydir + "/boot.sh"));
-			out.write("#!/system/bin/sh\n");
-			out.write(cmd);
-			out.write("\nexit 0\n");
-			out.flush();
-			out.close();
-			Runtime.getRuntime().exec("chmod 0777 " + mydir + "/boot.sh").waitFor();
-		} catch (Exception e) {
-			Log.e("ISTweak", e.toString());
-		}
 	}
 	
 	/**

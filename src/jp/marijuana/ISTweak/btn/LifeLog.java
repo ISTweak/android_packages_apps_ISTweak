@@ -26,7 +26,7 @@ public class LifeLog {
 	
 	private Button makeButton() {
 		Button btn = new Button(ctx);
-		if ( !chkTriger() ) {
+		if ( chkTriger() ) {
 			btn.setText(R.string.btn_LifeLogTri);
 			btn.setOnClickListener(new OnClickListener(){
 				@Override
@@ -40,7 +40,6 @@ public class LifeLog {
 			btn.setOnClickListener(new OnClickListener(){
 				@Override
 				public void onClick(View v) {
-					//NativeCmd.ExecuteCmdAlert(ctx, ISTweakActivity.cmdRm + " -rf /ldb/*.db", true);
 					delTriger();
 					ISTweakActivity.ctx.finish();
 				}
@@ -52,8 +51,8 @@ public class LifeLog {
 	private boolean chkTriger()
 	{
 		String cmd = "sqlite3 " + db + " \".schema T_COMMUNICATION\"|" + ISTweakActivity.cmdGrep + " TRIGGER";
-		String ret = NativeCmd.ExecuteCmd(ctx, cmd, true);
-		return !(ret.trim().replace("\n", "") == "");
+		String[] ret = NativeCmd.runScript(ctx, cmd, true);
+		return (ret[1].length() == 0);
 	}
 	
 	private void addTriger()
@@ -71,7 +70,7 @@ public class LifeLog {
 		}		
 		cmd += "sqlite3 " + dbb + " \"vacuum\"\n";
 		
-		NativeCmd.ExecuteCmdAlert(ctx, cmd, true);
+		NativeCmd.runScript(ctx, cmd, true);
 	}
 	
 	private void delTriger()
@@ -89,7 +88,7 @@ public class LifeLog {
 		}		
 		cmd += "sqlite3 " + dbb + " \"vacuum\"\n";
 		
-		NativeCmd.ExecuteCmdAlert(ctx, cmd, true);
+		NativeCmd.runScript(ctx, cmd, true);
 	}
 	
 	private String makeTrigger(String t) {

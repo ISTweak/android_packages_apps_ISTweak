@@ -4,14 +4,17 @@
 package jp.marijuana.ISTweak.utils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import jp.marijuana.ISTweak.ISTweakActivity;
 
@@ -60,39 +63,59 @@ public class NativeCmd {
 	 */
 	public static String ExecuteCmd(Context ctx, String cmd, Boolean su)
 	{
-		StringBuilder res = new StringBuilder();
-		NativeCmd.runScript(ctx, cmd, res, 0, su);
-		if ( res.length() > 0 ) {
-			return res.toString().trim();
+		String[] ret = new String[3];
+		String script = "";
+		if ( su ) {
+			script = NativeCmd.au + " -c " + cmd;
+		} else {
+			script = cmd;
 		}
-		return "";
+		ret = NativeCmd.ExecCommand(script);
+		return ret[1] + ret[2];
 	}
 	
 	/**
-	 * コマンドを実行する(戻り値がある場合はアラート)
+	 * コマンドを実行する(エラーがある場合はアラート)
 	 * @param Context ctx
 	 * @param String cmd
 	 * @param Boolean su
 	 */
 	public static boolean ExecuteCmdAlert(Context ctx, String cmd, Boolean su)
 	{
-		StringBuilder res = new StringBuilder();
-		NativeCmd.runScript(ctx, cmd, res, 0, su);
-		if ( res.length() > 0 ) {
-			Log.d("ISTweak", res.toString());
-			ISTweakActivity.alert(ctx, res.toString());
-			return false;
+		String[] ret = new String[2];
+		String script = "";
+		if ( su ) {
+			script = NativeCmd.au + " -c " + cmd;
+		} else {
+			script = cmd;
 		}
-		return true;
+    	ret = NativeCmd.ExecCommand(script);
+    	
+    	if ( ret[2].length() > 0 ) {
+    		ISTweakActivity.alert(ctx, ret[2]);
+    		Log.d("ISTweak", ret[2]);
+    		return false;
+    	} 
+    	return true;
 	}
 	
-	public static void ExecuteCommand(String paramArrayOfString) throws IOException
+	/**
+	 * 戻り値なしのコマンドを実行する
+	 * @param String　paramCommand
+	 * @throws IOException
+	 */
+	public static void ExecuteCommand(String paramCommand) throws IOException
 	{
 		String[] arrayOfString = new String[1];
-		arrayOfString[0] = (paramArrayOfString + "\n\n");
+		arrayOfString[0] = (paramCommand + "\n\n");
 		ExecuteCommands(arrayOfString);
 	}
 	
+	/**
+	 * 戻り値なしのコマンドを複数実行する
+	 * @param String[] paramArrayOfString
+	 * @throws IOException
+	 */
 	public static void ExecuteCommands(String[] paramArrayOfString) throws IOException
 	{
 		OutputStream localOutputStream = Runtime.getRuntime().exec(NativeCmd.au).getOutputStream();
@@ -102,7 +125,76 @@ public class NativeCmd {
 		}
 		localOutputStream.close();
 	}
+	
+	private static final class StreamGobbler extends Thread
+	{
+		InputStream is;
+		OutputStream os;
 
+		StreamGobbler(InputStream is, OutputStream redirect)
+		{
+			this.is = is;
+			this.os = redirect;
+		}
+		
+		public void run()
+		{
+			PrintWriter pw = new PrintWriter(os);
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			try {
+				while ((line = br.readLine()) != null) {
+					pw.println(line);
+				}
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			pw.flush();
+		}
+	}
+	
+	/**
+	 * コマンドを実行して各種出力を取得
+	 * @param String cmd
+	 * @return String[]
+	 */
+	public static String[] ExecCommand(String cmd)
+	{
+		String[] ret = new String[3];
+		
+		ByteArrayOutputStream out;
+		ByteArrayOutputStream err;
+		StreamGobbler outGobbler;
+		StreamGobbler errGobbler;
+		
+		try {
+			Process proc = Runtime.getRuntime().exec(cmd);
+
+			out = new ByteArrayOutputStream();
+			outGobbler = new StreamGobbler(proc.getInputStream(), out);
+			outGobbler.start();
+
+			err = new ByteArrayOutputStream();
+			errGobbler = new StreamGobbler(proc.getErrorStream(), err);
+			errGobbler.start();
+
+			ret[0] = String.valueOf(proc.waitFor());
+			outGobbler.join();
+			errGobbler.join();
+			
+			ret[1] = new String(out.toByteArray());
+			ret[2] = new String(err.toByteArray());
+			
+			out.close();
+			err.close();
+		} catch (Throwable t) {
+			Log.e("ISTweak", t.toString());
+		}
+		return ret;
+	}
+	
+	
  	/**
 	 * ファイルを1行読み込み
 	 * @param fn ファイル名
@@ -140,114 +232,30 @@ public class NativeCmd {
 			out.write("\nexit 0\n");
 			out.flush();
 			out.close();
-			Runtime.getRuntime().exec("chmod 0777 " + fn).waitFor();
+			ExecuteCommand("chmod 0777 " + fn);
 		} catch (Exception e) {
 			Log.e("ISTweak", e.toString());
 		}
 	}
 	
-	/**
-	 * Runs a script, wither as root or as a regular user (multiple commands separated by "\n").
-	 * @param ctx mandatory context
-	 * @param cmd the script to be executed
-	 * @param res the script output response (stdout + stderr)
-	 * @param timeout timeout in milliseconds (-1 for none)
-	 * @return the script exit code
-	 */
-	public static int runScript(Context ctx, String cmd, StringBuilder res, long timeout, boolean asroot)
+	public static String[] runScript(Context ctx, String cmd, boolean asroot)
 	{
-		final ScriptRunner runner = new ScriptRunner(ctx, cmd, res, asroot);
-		runner.start();
+		File execfile = new File(ctx.getCacheDir(), SCRIPT_FILE);
 		try {
-			if (timeout > 0) {
-				runner.join(timeout);
-			} else {
-				runner.join();
-			}
-			if (runner.isAlive()) {
-				// Timed-out
-				runner.interrupt();
-				runner.join(150);
-				runner.destroy();
-				runner.join(50);
-			}
-		} catch (InterruptedException ex) {}
-		return runner.exitcode;
-	}
-
-	/**
-	 * Internal thread used to execute scripts (as root or not).
-	 */
-	private static final class ScriptRunner extends Thread
-	{
-		private final File execfile;
-		private final String script;
-		private final StringBuilder res;
-		private final boolean asroot;
-		public int exitcode = -1;
-		private Process exec;
-		
-		/**
-		 * Creates a new script runner.
-		 * @param script script to run
-		 * @param res response output
-		 */
-		public ScriptRunner(Context ctx,String script, StringBuilder res, boolean asroot) {
-			res.setLength(0);
-			this.script = script;
-			this.res = res;
-			this.asroot = asroot;
-			this.execfile = new File(ctx.getCacheDir(), SCRIPT_FILE);
+			execfile.createNewFile();
+		} catch (IOException e) {
+			Log.e("ISTweak", e.toString());
 		}
 		
-		@Override
-		public void run() {
-			try {
-				execfile.createNewFile();
-				final String abspath = execfile.getAbsolutePath();
-				Runtime.getRuntime().exec("chmod 0777 " + abspath).waitFor();
-				final OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(execfile));
-				out.write("#!/system/bin/sh\n");
-				out.write("export PATH=/data/root/bin:\"$PATH\"\n");
-				out.write(script);
-				out.write("\nexit 0\n");
-				out.flush();
-				out.close();
-				
-				if ( this.asroot ) {
-					exec = Runtime.getRuntime().exec(NativeCmd.au + " -c " + abspath);
-				} else {
-					exec = Runtime.getRuntime().exec(abspath);
-				}
-				InputStreamReader r = new InputStreamReader(exec.getInputStream());
-				final char buf[] = new char[1024];
-				int read = 0;
-				// Consume the "stdout"
-				while ((read = r.read(buf)) != -1) {
-					if (res != null) res.append(buf, 0, read);
-				}
-				// Consume the "stderr"
-				r = new InputStreamReader(exec.getErrorStream());
-				read = 0;
-				while ((read = r.read(buf)) != -1) {
-					if (res != null) res.append(buf, 0, read);
-				}
-				// get the process exit code
-				if (exec != null) this.exitcode = exec.waitFor();
-			} catch (InterruptedException ex) {
-				if (res != null) res.append("\nOperation timed-out");
-			} catch (Exception ex) {
-				if (res != null) res.append("\n" + ex);
-			} finally {
-				destroy();
-			}
+		final String fullpath = execfile.getAbsolutePath();
+		createExecFile(cmd, fullpath);
+		
+		String script = "";
+		if ( asroot ) {
+			script = NativeCmd.au + " -c " + fullpath;
+		} else {
+			script = fullpath;
 		}
-		/**
-		 * Destroy this script runner
-		 */
-		public synchronized void destroy() {
-			if (exec != null) exec.destroy();
-			exec = null;
-		}
+		return ExecCommand(script);
 	}
 }

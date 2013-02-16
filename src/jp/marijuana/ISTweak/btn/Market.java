@@ -90,7 +90,7 @@ public class Market {
 						String cmd = "sqlite3 " + db + " \"insert into main (name,value) values('finsky.debug_options_enabled', 'true');\"\n" +
 								ISTweakActivity.cmdPkill + " -9 com.android.vending\n" +
 								"";
-						NativeCmd.ExecuteCmdAlert(ctx, cmd, true);
+						NativeCmd.runScript(ctx, cmd, true);
 						MakeCarrierList();
 						ISTweakActivity.ctx.finish();
 					}
@@ -102,7 +102,7 @@ public class Market {
 						String cmd = "sqlite3 " + db + " \"delete from main where name = 'finsky.debug_options_enabled';\"\n" +
 								ISTweakActivity.cmdPkill + " -9 com.android.vending\n" +
 								"";
-						NativeCmd.ExecuteCmdAlert(ctx, cmd, true);
+						NativeCmd.runScript(ctx, cmd, true);
 						ISTweakActivity.ctx.finish();
 					}
 				});
@@ -160,6 +160,6 @@ public class Market {
 			cmd += ff.getAbsolutePath() + " ro.cdma.home.operator.numeric \"" + marketid + "\"\n" +
 				   ff.getAbsolutePath() + " ro.cdma.home.operator.alpha \"" + alpha + "\"\n";
 		}
-		NativeCmd.ExecuteCmdAlert(ctx, cmd, true);
+		NativeCmd.runScript(ctx, cmd, true);
 	}
 }

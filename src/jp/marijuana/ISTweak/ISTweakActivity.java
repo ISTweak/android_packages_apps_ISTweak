@@ -297,7 +297,7 @@ public class ISTweakActivity extends Activity
 		
 		//
 		cmdPath();
-		
+
 		//setpropex
 		assertBinaries();
 		

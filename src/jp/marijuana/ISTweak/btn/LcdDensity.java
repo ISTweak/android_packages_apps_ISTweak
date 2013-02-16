@@ -97,6 +97,6 @@ public class LcdDensity {
 			File ff = new File(ctx.getDir("bin", 0), "lcd_density");
 			dpicmd = "echo '" + ff.getAbsolutePath() + " " + intDpi + "' >> " + AutoExec;
 		}
-		NativeCmd.ExecuteCmdAlert(ctx, dpicmd, true);
+		NativeCmd.runScript(ctx, dpicmd, true);
 	}
 }

@@ -190,7 +190,7 @@ public class Zram extends Activity
 	{
 		if (NativeCmd.fileExists(compsize)) {
 			String cmd = "cat " + compsize;
-			return NativeCmd.ExecuteCmd(this, cmd, true);
+			return NativeCmd.ExecuteCmd(this, cmd, true).trim().replace("\n", "");
 		}
 		return "0";
 	}
@@ -198,7 +198,7 @@ public class Zram extends Activity
 	private String getZramCurrent()
 	{
 		String cmd = "cat " + disksize;
-		return NativeCmd.ExecuteCmd(this, cmd, true);
+		return NativeCmd.ExecuteCmd(this, cmd, true).trim().replace("\n", "");
 	}
 	
 }

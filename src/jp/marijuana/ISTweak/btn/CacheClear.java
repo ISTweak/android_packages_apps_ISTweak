@@ -52,7 +52,7 @@ public class CacheClear {
 				if ( ISTweakActivity.Model.equals("IS11PT") ) {
 					cmd += ISTweakActivity.cmdRm + " -rf /data/bugreports/*" + "\n";
 				}
-				NativeCmd.ExecuteCmdAlert(ctx, cmd, true);
+				NativeCmd.runScript(ctx, cmd, true);
 			}});
 		confirm.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener(){
 			@Override

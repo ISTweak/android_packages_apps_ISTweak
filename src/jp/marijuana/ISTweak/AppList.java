@@ -27,15 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PaintFlagsDrawFilter;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class AppList extends Activity  implements Runnable {
@@ -48,7 +40,8 @@ public class AppList extends Activity  implements Runnable {
 	
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.applist);
 		
@@ -62,7 +55,8 @@ public class AppList extends Activity  implements Runnable {
 	}
 	
 	@Override
-	public void run() {
+	public void run()
+	{
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -70,7 +64,8 @@ public class AppList extends Activity  implements Runnable {
 		mhandler.sendEmptyMessage(0);
 	}
 	
-	private void ShowWait(){
+	private void ShowWait()
+	{
 		waitDialog = new ProgressDialog(this);
 		waitDialog.setMessage(getString(R.string.AppWaitAction));
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -79,8 +74,10 @@ public class AppList extends Activity  implements Runnable {
 		thread.start();
 	}
 
-	private Handler mhandler = new Handler() {
-		public void handleMessage(Message msg){
+	private Handler mhandler = new Handler()
+	{
+		public void handleMessage(Message msg)
+		{
 			getAppList();
 			waitDialog.dismiss();
 			waitDialog = null;
@@ -93,7 +90,8 @@ public class AppList extends Activity  implements Runnable {
 		private LayoutInflater inflater;
 		private int textViewResourceId;
 		
-		public MyAdapter(Context context, int textViewResourceId, ArrayList<T> items) {
+		public MyAdapter(Context context, int textViewResourceId, ArrayList<T> items)
+		{
 			super(context, textViewResourceId, items);
 			this.items = items;
 			this.textViewResourceId = textViewResourceId;
@@ -101,7 +99,8 @@ public class AppList extends Activity  implements Runnable {
 		}
 		
 		@Override
-		public View getView(int position,View convertView, ViewGroup parent) {
+		public View getView(int position,View convertView, ViewGroup parent)
+		{
 			View view;
 			if (convertView == null) {
 				view = inflater.inflate(this.textViewResourceId, null);
@@ -110,98 +109,64 @@ public class AppList extends Activity  implements Runnable {
 			}
 			T item = items.get(position);
 			if (item != null) {
-				TextView hT = (TextView) view.findViewById(R.id.HeaderText);
-				TextView bT = (TextView) view.findViewById(R.id.BodyText);
 				ImageView icon = (ImageView) view.findViewById(R.id.Icon);
-				hT.setText(item.getHeaderText());
+				icon.setImageDrawable(item.getIcon());
+				
+				item.tv = (TextView) view.findViewById(R.id.HeaderText);
+				item.tv.setText(item.getHeaderText());
+				item.tv.setTextColor(item.getTextColor());
+				
+				TextView bT = (TextView) view.findViewById(R.id.BodyText);
 				bT.setText(item.getBodyText());
-				hT.setTextColor(item.getTextColor());
-				icon.setImageDrawable(resizeIcon(item.getIcon()));
 			}
 			return view;
 		}
 	}
 	
-	/**
-	 * アイコンサイズの変更
-	 * http://www.saturn.dti.ne.jp/npaka/android/HomeEx/index.html よりコピペしました
-	 */
-	private Drawable resizeIcon(Drawable icon) {
-		//標準アイコンサイズの取得
-		Resources res = getResources();
-		int width = (int)res.getDimension(android.R.dimen.app_icon_size) + 4;
-		int height = (int)res.getDimension(android.R.dimen.app_icon_size) + 4;
-		
-		//現在のアイコンサイズの取得
-		int iconWidth = icon.getIntrinsicWidth();
-		int iconHeight = icon.getIntrinsicHeight();
-
-		//アイコンサイズの変更
-		if (width > 0 && height > 0 && (width < iconWidth || height < iconHeight)) {
-		 	//変換後のアイコンサイズの計算
-			float ratio = (float)iconWidth / (float)iconHeight;
-			if (iconWidth > iconHeight) {
-				height = (int)(width / ratio);
-			} else if (iconHeight > iconWidth) {
-				width = (int)(height * ratio);
-			}
-
-			//動的キャンバスの生成
-			Bitmap.Config c = (icon.getOpacity() != PixelFormat.OPAQUE) ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
-			Bitmap thumb = Bitmap.createBitmap(width, height, c);
-			Canvas canvas = new Canvas(thumb);
-			canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG, 0));
-
-			//動的キャンバスへのアイコン描画
-			Rect oldBounds = new Rect();
-			oldBounds.set(icon.getBounds());
-			icon.setBounds(0, 0, width, height);
-			icon.draw(canvas);
-			icon.setBounds(oldBounds);
-			
-			 //キャンバスをDrawableオブジェクトに変換
-			icon = new BitmapDrawable(thumb);
-		}		
-		return icon;
-	}
-	
-	private class ListData {
+	private class ListData
+	{
 		private Drawable icon;
 		private String headerText;
 		private String bodyText;
 		private int txtColor = 0;
+		public TextView tv;
 
-		public ListData(Drawable icon, String headerText, String bodyText, int cl) {
+		public ListData(Drawable icon, String headerText, String bodyText, int cl)
+		{
 			this.icon = icon;
 			this.headerText = headerText.replace("\n", "");
 			this.bodyText = bodyText;
-			if ( cl != 0 ) {
-				this.txtColor = cl;
-			}
+			this.txtColor = cl;
 		}
 
-		public String getHeaderText() {
+		public String getHeaderText()
+		{
 			return headerText;
 		}
 
-		public String getBodyText() {
+		public String getBodyText()
+		{
 			return bodyText;
 		}
 
-		public Drawable getIcon() {
+		public Drawable getIcon()
+		{
 			return icon;
 		}
 		
-		public int getTextColor() {
-			if ( txtColor != 0 ) {
-				return txtColor;
-			} else {
-				return Color.rgb(255, 255, 255);
-			}
+		public int getTextColor()
+		{
+			return txtColor;
+		}
+		
+		public void setTextColor(int cl)
+		{
+			this.txtColor = cl;
 		}
 	}
 	
-	private void getAppList() {
+	private void getAppList()
+	{
 		//インストールされたアプリケーションの取得
 		pm = this.getPackageManager();
 		List<ApplicationInfo> list = pm.getInstalledApplications(0);
@@ -218,12 +183,14 @@ public class AppList extends Activity  implements Runnable {
 		//リストビューに追加
 		ListView lv = (ListView) findViewById(R.id.listview);
 		myA = new MyAdapter<ListData>(this, R.layout.applist, new ArrayList<ListData>());
+		int cl = 0;
 		for (ApplicationInfo lapp : LApps) {
 			if (pm.getApplicationEnabledSetting(lapp.packageName)== 2) {
-				myA.add(new ListData(lapp.loadIcon(pm), lapp.loadLabel(pm).toString(), lapp.packageName, Color.rgb(0,0,255)));
+				cl = Color.rgb(0,0,255);
 			} else {
-				myA.add(new ListData(lapp.loadIcon(pm), lapp.loadLabel(pm).toString(), lapp.packageName, 0));
+				cl = Color.rgb(255, 255, 255);
 			}
+			myA.add(new ListData(lapp.loadIcon(pm), lapp.loadLabel(pm).toString(), lapp.packageName, cl));
 		}
 		lv.setAdapter(myA);
 		
@@ -244,6 +211,8 @@ public class AppList extends Activity  implements Runnable {
 					alert.setPositiveButton(R.string.DisableAction, new DialogInterface.OnClickListener(){  
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							item.setTextColor(Color.rgb(0,0,255));
+							item.tv.setTextColor(item.getTextColor());
 							NativeCmd.ExecuteCmdAlert(AppList.this, "pm disable " + item.getBodyText(), true);
 						}});
 				} else if (pm.getApplicationEnabledSetting(item.getBodyText())== 2) {
@@ -252,6 +221,8 @@ public class AppList extends Activity  implements Runnable {
 					alert.setNeutralButton(R.string.EnableAction, new DialogInterface.OnClickListener(){
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							item.setTextColor(Color.rgb(255,255,255));
+							item.tv.setTextColor(item.getTextColor());
 							NativeCmd.ExecuteCmdAlert(AppList.this, "pm enable " + item.getBodyText(), true);
 						}});
 				}

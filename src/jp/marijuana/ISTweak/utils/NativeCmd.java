@@ -214,7 +214,7 @@ public class NativeCmd {
 	 	} catch (IOException e) {
 	 		Log.e("ISTweak", e.toString());
 	 	}
-		return str.trim();
+		return str.trim().replace("\n", "");
 	}
 	
 	/**
@@ -238,6 +238,13 @@ public class NativeCmd {
 		}
 	}
 	
+	/**
+	 * スクリプトを書き出して実行
+	 * @param Context　ctx
+	 * @param String　cmd　スクリプトに書き出すコマンド
+	 * @param boolean　asroot rootで実行するか
+	 * @return
+	 */
 	public static String[] runScript(Context ctx, String cmd, boolean asroot)
 	{
 		File execfile = new File(ctx.getCacheDir(), SCRIPT_FILE);

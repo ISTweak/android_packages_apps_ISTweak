@@ -35,7 +35,8 @@ public class AppList extends Activity  implements Runnable {
 	private Thread thread;
 	public PackageManager pm;
 	public MyAdapter<ListData> myA;
-	
+	private final int white = Color.rgb(255, 255, 255);
+	private final int blue = Color.rgb(0, 0, 255);
 	public static String AppDir = "";
 	
 	/** Called when the activity is first created. */
@@ -110,14 +111,14 @@ public class AppList extends Activity  implements Runnable {
 			T item = items.get(position);
 			if (item != null) {
 				ImageView icon = (ImageView) view.findViewById(R.id.Icon);
-				icon.setImageDrawable(item.getIcon());
+				icon.setImageDrawable(item.icon);
 				
 				item.tv = (TextView) view.findViewById(R.id.HeaderText);
-				item.tv.setText(item.getHeaderText());
-				item.tv.setTextColor(item.getTextColor());
+				item.tv.setText(item.headerText);
+				item.tv.setTextColor(item.txtColor);
 				
 				TextView bT = (TextView) view.findViewById(R.id.BodyText);
-				bT.setText(item.getBodyText());
+				bT.setText(item.bodyText);
 			}
 			return view;
 		}
@@ -125,10 +126,10 @@ public class AppList extends Activity  implements Runnable {
 	
 	private class ListData
 	{
-		private Drawable icon;
-		private String headerText;
-		private String bodyText;
-		private int txtColor = 0;
+		public Drawable icon;
+		public String headerText;
+		public String bodyText;
+		public int txtColor = 0;
 		public TextView tv;
 
 		public ListData(Drawable icon, String headerText, String bodyText, int cl)
@@ -138,43 +139,19 @@ public class AppList extends Activity  implements Runnable {
 			this.bodyText = bodyText;
 			this.txtColor = cl;
 		}
-
-		public String getHeaderText()
-		{
-			return headerText;
-		}
-
-		public String getBodyText()
-		{
-			return bodyText;
-		}
-
-		public Drawable getIcon()
-		{
-			return icon;
-		}
-		
-		public int getTextColor()
-		{
-			return txtColor;
-		}
-		
-		public void setTextColor(int cl)
-		{
-			this.txtColor = cl;
-		}
 	}
 	
 	private void getAppList()
 	{
 		//インストールされたアプリケーションの取得
 		pm = this.getPackageManager();
+		int l = AppDir.length();
 		List<ApplicationInfo> list = pm.getInstalledApplications(0);
 		
 		//アプリケーションをsystem/app内のみにしてソート
 		List<ApplicationInfo> LApps = new ArrayList<ApplicationInfo>();
 		for (ApplicationInfo ai : list) {
-			if ( ai.publicSourceDir.substring(0,AppDir.length()).equals(AppDir) ) {
+			if ( ai.publicSourceDir.substring(0, l).equals(AppDir) ) {
 				LApps.add(ai);
 			}
 		}
@@ -183,14 +160,12 @@ public class AppList extends Activity  implements Runnable {
 		//リストビューに追加
 		ListView lv = (ListView) findViewById(R.id.listview);
 		myA = new MyAdapter<ListData>(this, R.layout.applist, new ArrayList<ListData>());
-		int cl = 0;
 		for (ApplicationInfo lapp : LApps) {
 			if (pm.getApplicationEnabledSetting(lapp.packageName)== 2) {
-				cl = Color.rgb(0,0,255);
+				myA.add(new ListData(lapp.loadIcon(pm), lapp.loadLabel(pm).toString(), lapp.packageName, blue));
 			} else {
-				cl = Color.rgb(255, 255, 255);
+				myA.add(new ListData(lapp.loadIcon(pm), lapp.loadLabel(pm).toString(), lapp.packageName, white));
 			}
-			myA.add(new ListData(lapp.loadIcon(pm), lapp.loadLabel(pm).toString(), lapp.packageName, cl));
 		}
 		lv.setAdapter(myA);
 		
@@ -203,27 +178,27 @@ public class AppList extends Activity  implements Runnable {
 				// アイテムの取得
 				item = (ListData)listView.getItemAtPosition(position);
 				AlertDialog.Builder alert = new AlertDialog.Builder(AppList.this); 
-				alert.setTitle(item.getHeaderText());
+				alert.setTitle(item.headerText);
 				
-				if (pm.getApplicationEnabledSetting(item.getBodyText())!= 2) {
+				if (pm.getApplicationEnabledSetting(item.bodyText)!= 2) {
 					//無効ボタン
-					alert.setMessage(item.getBodyText() + getString(R.string.ToDelete));
+					alert.setMessage(item.bodyText + getString(R.string.ToDelete));
 					alert.setPositiveButton(R.string.DisableAction, new DialogInterface.OnClickListener(){  
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							item.setTextColor(Color.rgb(0,0,255));
-							item.tv.setTextColor(item.getTextColor());
-							NativeCmd.ExecuteCmdAlert(AppList.this, "pm disable " + item.getBodyText(), true);
+							item.txtColor = blue;
+							item.tv.setTextColor(blue);
+							NativeCmd.ExecuteCmdAlert(AppList.this, "pm disable " + item.bodyText, true);
 						}});
-				} else if (pm.getApplicationEnabledSetting(item.getBodyText())== 2) {
+				} else if (pm.getApplicationEnabledSetting(item.bodyText)== 2) {
 					//有効ボタン
-					alert.setMessage(item.getBodyText() + getString(R.string.ToReturn));
+					alert.setMessage(item.bodyText + getString(R.string.ToReturn));
 					alert.setNeutralButton(R.string.EnableAction, new DialogInterface.OnClickListener(){
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							item.setTextColor(Color.rgb(255,255,255));
-							item.tv.setTextColor(item.getTextColor());
-							NativeCmd.ExecuteCmdAlert(AppList.this, "pm enable " + item.getBodyText(), true);
+							item.txtColor = white;
+							item.tv.setTextColor(white);
+							NativeCmd.ExecuteCmdAlert(AppList.this, "pm enable " + item.bodyText, true);
 						}});
 				}
 				//キャンセルボタン

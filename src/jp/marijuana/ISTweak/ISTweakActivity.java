@@ -179,7 +179,7 @@ public class ISTweakActivity extends Activity
 		btnr.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				NativeCmd.ExecuteCmdAlert(ISTweakActivity.this, TetheringCmd, true);
+				NativeCmd.ExecuteCommand(TetheringCmd, true);
 			}
 		});
 		return btnr;
@@ -304,11 +304,11 @@ public class ISTweakActivity extends Activity
 		//Type取得
 		Model = NativeCmd.getProperties("ro.product.model").trim().replace("\n", "");
 		if ( Model.equals("IS06") ) {
-			TetheringCmd = "/system/bin/am start -n com.pantech.app.wifitest/.TetheringActivation > /dev/null 2>&1";
+			TetheringCmd = "/system/bin/am start -n com.pantech.app.wifitest/.TetheringActivation";
 		} else if ( Model.equals("IS11PT") ) {
-			TetheringCmd = "/system/bin/am start -n com.android.settings/.wifi.TetheringActivation > /dev/null 2>&1";
+			TetheringCmd = "/system/bin/am start -n com.android.settings/.wifi.TetheringActivation";
 		} else if ( Model.equals("IS11N") ) {
-			TetheringCmd = "/system/bin/am start -n com.android.settings/.TetherSettings > /dev/null 2>&1";
+			TetheringCmd = "/system/bin/am start -n com.android.settings/.TetherSettings";
 		//} else {
 		//	TetheringCmd = "/system/bin/am start -n com.android.settings/.TetherSettings > /dev/null 2>&1";
 		}

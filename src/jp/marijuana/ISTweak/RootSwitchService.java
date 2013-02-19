@@ -11,11 +11,13 @@ import android.os.IBinder;
 import android.app.PendingIntent;
 import android.widget.RemoteViews;
 
-public class RootSwitchService extends Service {
+public class RootSwitchService extends Service
+{
 	final public String MSG_CHANGE = "jp.marijuana.ISTweak.CHANGE";
 
 	@Override
-	public void onStart(Intent intent, int startId) {
+	public void onStart(Intent intent, int startId)
+	{
 		super.onStart(intent, startId);
 
 		Intent buttonIntent = new Intent();
@@ -38,7 +40,8 @@ public class RootSwitchService extends Service {
 	}
 
 	@Override
-	public IBinder onBind(Intent arg0) {
+	public IBinder onBind(Intent arg0)
+	{
 		return null;
 	}
 

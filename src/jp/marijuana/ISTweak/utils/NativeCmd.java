@@ -21,112 +21,12 @@ import jp.marijuana.ISTweak.ISTweakActivity;
 import android.content.Context;
 import android.util.Log;
 
-public class NativeCmd {
-	private static final String SCRIPT_FILE = "execcmd.sh";
+public class NativeCmd
+{
 	public static String au = "/sbin/au";
+	public static String sh = "/system/bin/sh";
 	
-	/**
-	 * ファイル（ディレクト）の存在チェック
-	 * @param String fn
-	 * @return boolean
-	 */
-	public static boolean fileExists(String fn)
-	{
-		return new File(fn).exists();
-	}
-	
-	/**
-	 * プロパティ値の取得
-	 * @param key
-	 * @return
-	 */
-	public static String getProperties(String key)
-	{
-		String line = "";
-		try {
-			Process p = Runtime.getRuntime().exec("getprop " + key);
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			line = input.readLine();
-			input.close();
-			p.destroy();
-		} catch (Exception err) {
-			Log.e("ISTweak", "none " + key);
-		}
-		return line.trim().replace("\n", "");
-	}
-	
-	/**
-	 * コマンドを実行する
-	 * @param Context ctx
-	 * @param String cmd
-	 * @param Boolean su
-	 */
-	public static String ExecuteCmd(Context ctx, String cmd, Boolean su)
-	{
-		String[] ret = new String[3];
-		String script = "";
-		if ( su ) {
-			script = NativeCmd.au + " -c " + cmd;
-		} else {
-			script = cmd;
-		}
-		ret = NativeCmd.ExecCommand(script);
-		return ret[1] + ret[2];
-	}
-	
-	/**
-	 * コマンドを実行する(エラーがある場合はアラート)
-	 * @param Context ctx
-	 * @param String cmd
-	 * @param Boolean su
-	 */
-	public static boolean ExecuteCmdAlert(Context ctx, String cmd, Boolean su)
-	{
-		String[] ret = new String[2];
-		String script = "";
-		if ( su ) {
-			script = NativeCmd.au + " -c " + cmd;
-		} else {
-			script = cmd;
-		}
-    	ret = NativeCmd.ExecCommand(script);
-    	
-    	if ( ret[2].length() > 0 ) {
-    		ISTweakActivity.alert(ctx, ret[2]);
-    		Log.d("ISTweak", ret[2]);
-    		return false;
-    	} 
-    	return true;
-	}
-	
-	/**
-	 * 戻り値なしのコマンドを実行する
-	 * @param String　paramCommand
-	 * @throws IOException
-	 */
-	public static void ExecuteCommand(String paramCommand) throws IOException
-	{
-		String[] arrayOfString = new String[1];
-		arrayOfString[0] = (paramCommand + "\n\n");
-		ExecuteCommands(arrayOfString);
-	}
-	
-	/**
-	 * 戻り値なしのコマンドを複数実行する
-	 * @param String[] paramArrayOfString
-	 * @throws IOException
-	 */
-	public static void ExecuteCommands(String[] paramArrayOfString) throws IOException
-	{
-		OutputStream localOutputStream = Runtime.getRuntime().exec(NativeCmd.au).getOutputStream();
-		int i = paramArrayOfString.length;
-		for (int j = 0; j < i; j++) {
-			localOutputStream.write(paramArrayOfString[j].getBytes());
-		}
-		localOutputStream.close();
-	}
-	
-	private static final class StreamGobbler extends Thread
+	private static class StreamGobbler extends Thread
 	{
 		InputStream is;
 		OutputStream os;
@@ -152,48 +52,167 @@ public class NativeCmd {
 			}
 			pw.flush();
 		}
+	}	
+	
+	/**
+	 * ファイル（ディレクト）の存在チェック
+	 * @param String fn
+	 * @return boolean
+	 */
+	public static boolean fileExists(String fn)
+	{
+		return new File(fn).exists();
 	}
 	
 	/**
-	 * コマンドを実行して各種出力を取得
-	 * @param String cmd
+	 * 複数コマンドの実行
+	 * @param String[] cmds
+	 * @param Boolean su
 	 * @return String[]
 	 */
-	public static String[] ExecCommand(String cmd)
+	public static String[] ExecCommands(String[] cmds, Boolean su)
 	{
-		String[] ret = new String[3];
-		
-		ByteArrayOutputStream out;
+		String[] rets = new String[3];
+		String shell = NativeCmd.sh;
+		if ( su ) {
+			shell = NativeCmd.au;
+		}
+
+		ByteArrayOutputStream std;
 		ByteArrayOutputStream err;
-		StreamGobbler outGobbler;
+		StreamGobbler stdGobbler;
 		StreamGobbler errGobbler;
 		
 		try {
-			Process proc = Runtime.getRuntime().exec(cmd);
-
-			out = new ByteArrayOutputStream();
-			outGobbler = new StreamGobbler(proc.getInputStream(), out);
-			outGobbler.start();
+			Process proc = Runtime.getRuntime().exec(shell);
+			OutputStream os = proc.getOutputStream();
+			String cmd = "";
+			for (int i = 0; i < cmds.length; i++) {
+				cmd = cmds[i] + "\n";
+				os.write(cmd.getBytes());
+			}
+			os.close();
+			os.flush();
+			std = new ByteArrayOutputStream();
+			stdGobbler = new StreamGobbler(proc.getInputStream(), std);
+			stdGobbler.start();
 
 			err = new ByteArrayOutputStream();
 			errGobbler = new StreamGobbler(proc.getErrorStream(), err);
 			errGobbler.start();
 
-			ret[0] = String.valueOf(proc.waitFor());
-			outGobbler.join();
+			rets[0] = String.valueOf(proc.waitFor());
+			stdGobbler.join();
 			errGobbler.join();
 			
-			ret[1] = new String(out.toByteArray());
-			ret[2] = new String(err.toByteArray());
-			
-			out.close();
+			rets[1] = new String(std.toByteArray());
+			rets[2] = new String(err.toByteArray());
+
+			std.close();
 			err.close();
 		} catch (Throwable t) {
 			Log.e("ISTweak", t.toString());
 		}
-		return ret;
+
+		return rets;
 	}
 	
+	/**
+	 * コマンドの実行
+	 * @param String　cmd
+	 * @param Boolean　su
+	 * @return　String[]
+	 */
+	public static String[] ExecCommand(String cmd, Boolean su)
+	{
+		String[] arrayOfCmd = new String[1];
+		arrayOfCmd[0] = cmd;
+		return ExecCommands(arrayOfCmd, su);
+	}
+	
+	/**
+	 * プロパティ値の取得
+	 * @param key
+	 * @return　String
+	 */
+	public static String getProperties(String key)
+	{
+		String line = "";
+		try {
+			Process p = Runtime.getRuntime().exec("getprop " + key);
+			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			line = input.readLine();
+			input.close();
+			p.destroy();
+		} catch (Exception err) {
+			Log.e("ISTweak", "none " + key);
+		}
+		return line.trim().replace("\n", "");
+	}
+	
+	/**
+	 * コマンドを実行する(戻り値がある場合はアラート)
+	 * @param Context ctx
+	 * @param String cmd
+	 * @param Boolean su
+	 */
+	public static boolean ExecuteCmdAlert(Context ctx, String cmd, Boolean su)
+	{
+		String[] ret = new String[3];
+    	ret = NativeCmd.ExecCommand(cmd, su);
+    	
+    	if ( ret[1].length() > 0 ) {
+    		ISTweakActivity.alert(ctx, ret[1]);
+    		Log.d("ISTweak", ret[1]);
+    	}
+    	if ( ret[2].length() > 0 ) {
+    		ISTweakActivity.alert(ctx, ret[2]);
+    		Log.e("ISTweak", ret[2]);
+    		return false;
+    	} 
+    	return true;
+	}
+	
+	/**
+	 * 戻り値なしのコマンドを実行する
+	 * @param String　paramCommand
+	 * @param Boolean su
+	 */
+	public static void ExecuteCommand(String cmd, Boolean su)
+	{
+		String[] arrayOfString = new String[1];
+		arrayOfString[0] = cmd;
+		ExecuteCommands(arrayOfString, su);
+	}
+	
+	/**
+	 * 戻り値なしのコマンドを複数実行する
+	 * @param String[] cmds
+	 * @param Boolean su
+	 */
+	public static void ExecuteCommands(String[] cmds, Boolean su)
+	{
+		String shell = NativeCmd.sh;
+		if ( su ) {
+			shell = NativeCmd.au;
+		}
+		
+		try {
+			Process proc = Runtime.getRuntime().exec(shell);
+			OutputStream os = proc.getOutputStream();
+			
+			String cmd = "";
+			for (int i = 0; i < cmds.length; i++) {
+				cmd = cmds[i] + "\n\n";
+				os.write(cmd.getBytes());
+			}
+			os.close();
+		} catch (IOException e) {
+			Log.e("ISTweak", e.toString());
+		}
+	}
+
+
 	
  	/**
 	 * ファイルを1行読み込み
@@ -232,37 +251,9 @@ public class NativeCmd {
 			out.write("\nexit 0\n");
 			out.flush();
 			out.close();
-			ExecuteCommand("chmod 0777 " + fn);
+			ExecuteCommand("chmod 0777 " + fn, true);
 		} catch (Exception e) {
 			Log.e("ISTweak", e.toString());
 		}
-	}
-	
-	/**
-	 * スクリプトを書き出して実行
-	 * @param Context　ctx
-	 * @param String　cmd　スクリプトに書き出すコマンド
-	 * @param boolean　asroot rootで実行するか
-	 * @return
-	 */
-	public static String[] runScript(Context ctx, String cmd, boolean asroot)
-	{
-		File execfile = new File(ctx.getCacheDir(), SCRIPT_FILE);
-		try {
-			execfile.createNewFile();
-		} catch (IOException e) {
-			Log.e("ISTweak", e.toString());
-		}
-		
-		final String fullpath = execfile.getAbsolutePath();
-		createExecFile(cmd, fullpath);
-		
-		String script = "";
-		if ( asroot ) {
-			script = NativeCmd.au + " -c " + fullpath;
-		} else {
-			script = fullpath;
-		}
-		return ExecCommand(script);
 	}
 }

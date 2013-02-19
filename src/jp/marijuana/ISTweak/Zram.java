@@ -88,10 +88,9 @@ public class Zram extends Activity
 			public void onClick(View v) {
 				EditText edit = (EditText)findViewById(1);
 				String cmd = "echo " + Integer.parseInt(edit.getText().toString()) * 1024 * 1024 + " > ";
-				NativeCmd.ExecuteCmdAlert(Zram.this, cmd + compsize, true);
-				NativeCmd.ExecuteCmdAlert(Zram.this, "chmod 0666 " + compsize, true);
+				NativeCmd.ExecuteCommands(new String[]{cmd + compsize, "chmod 0666 " + compsize}, true);
 				Toast.makeText(Zram.this, R.string.str_ToReboot, Toast.LENGTH_LONG).show();
-				//finish();
+				finish();
 			}
 		});
 		tray.addView(btn, lparm);
@@ -102,7 +101,7 @@ public class Zram extends Activity
 			btnd.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					NativeCmd.ExecuteCmd(Zram.this, "rm " + compsize, true);
+					NativeCmd.ExecuteCommand("rm " + compsize, true);
 					finish();
 				}
 			});
@@ -166,7 +165,7 @@ public class Zram extends Activity
 				Spinner spinner = (Spinner)findViewById(10);
 				String item = (String)spinner.getSelectedItem();
 				String cmd = "echo " + item + " > " + swappiness;
-				NativeCmd.ExecuteCmd(Zram.this, cmd, true);
+				NativeCmd.ExecuteCommand(cmd, true);
 
 				CheckBox chkbox = (CheckBox) findViewById(4);
 				if (chkbox.isChecked()) {
@@ -185,20 +184,22 @@ public class Zram extends Activity
 
 		return tray;
 	}
-	
+
 	private String getZramSize()
 	{
 		if (NativeCmd.fileExists(compsize)) {
 			String cmd = "cat " + compsize;
-			return NativeCmd.ExecuteCmd(this, cmd, true).trim().replace("\n", "");
+			String[] ret = NativeCmd.ExecCommand(cmd, true);
+			return ret[1].trim().replace("\n", "");
 		}
 		return "0";
 	}
-	
+
 	private String getZramCurrent()
 	{
 		String cmd = "cat " + disksize;
-		return NativeCmd.ExecuteCmd(this, cmd, true).trim().replace("\n", "");
+		String[] ret = NativeCmd.ExecCommand(cmd, true);
+		return ret[1].trim().replace("\n", "");
 	}
 	
 }

@@ -8,23 +8,27 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class LifeLog {
+public class LifeLog
+{
 	private Context ctx;
 	private final String[] tb = {"T_COMMUNICATION", "T_INFORMATION", "T_LIFELOG", "T_MAIL", "T_PERSON", "T_PHONE_BOOK", "T_SPAREPARTS", "T_SUMMARY"};
 	private final String[] tbb = {"T_LIFELOG", "T_PERSON", "T_PHONE_BOOK"};
 	private final String db = "/ldb/ldb.db";
 	private final String dbb = "/ldb/ldbbackup.db";
 	
-	public static Button getButton(Context c) {
+	public static Button getButton(Context c)
+	{
 		LifeLog ins = new LifeLog(c);
 		return ins.makeButton();
 	}
 	
-	private LifeLog(Context c) {
+	private LifeLog(Context c)
+	{
 		ctx = c;
 	}
 	
-	private Button makeButton() {
+	private Button makeButton()
+	{
 		Button btn = new Button(ctx);
 		if ( chkTriger() ) {
 			btn.setText(R.string.btn_LifeLogTri);
@@ -51,8 +55,8 @@ public class LifeLog {
 	private boolean chkTriger()
 	{
 		String cmd = "sqlite3 " + db + " \".schema T_COMMUNICATION\"|" + ISTweakActivity.cmdGrep + " TRIGGER";
-		String[] ret = NativeCmd.runScript(ctx, cmd, true);
-		return (ret[1].length() == 0);
+		String[] ret = NativeCmd.ExecCommand(cmd, true);
+		return (ret[1].trim().replace("\n", "").length() == 0);
 	}
 	
 	private void addTriger()
@@ -70,7 +74,7 @@ public class LifeLog {
 		}		
 		cmd += "sqlite3 " + dbb + " \"vacuum\"\n";
 		
-		NativeCmd.runScript(ctx, cmd, true);
+		NativeCmd.ExecuteCommands(cmd.split("\n"), true);
 	}
 	
 	private void delTriger()
@@ -88,10 +92,11 @@ public class LifeLog {
 		}		
 		cmd += "sqlite3 " + dbb + " \"vacuum\"\n";
 		
-		NativeCmd.runScript(ctx, cmd, true);
+		NativeCmd.ExecuteCommands(cmd.split("\n"), true);
 	}
 	
-	private String makeTrigger(String t) {
+	private String makeTrigger(String t)
+	{
 		String sql = "create trigger " + t + "_TRI " +
 					 "insert on " + t + " " +
 					 "begin " +

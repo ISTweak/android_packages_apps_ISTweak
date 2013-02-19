@@ -30,7 +30,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
-public class AppList extends Activity  implements Runnable {
+public class AppList extends Activity  implements Runnable
+{
 	private static ProgressDialog waitDialog;
 	private Thread thread;
 	public PackageManager pm;

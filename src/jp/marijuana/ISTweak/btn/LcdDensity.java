@@ -19,23 +19,27 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class LcdDensity {
+public class LcdDensity
+{
 	private Context ctx;
 	private AlertDialog mDlg = null;
 	private Integer MaxDpi = 240;
 	private Integer MinDpi = 170;
 	private String AutoExec = "/data/root/autoexec.sh";
 	
-	public static Button getButton(Context c) {
+	public static Button getButton(Context c)
+	{
 		LcdDensity ins = new LcdDensity(c);
 		return ins.makeButton();
 	}
 	
-	private LcdDensity(Context c) {
+	private LcdDensity(Context c)
+	{
 		ctx = c;
 	}
 	
-	private Button makeButton() {
+	private Button makeButton()
+	{
 		Button btn = new Button(ctx);
 		btn.setText(R.string.btn_LcdDensity);
 		btn.setOnClickListener(new OnClickListener(){
@@ -58,9 +62,8 @@ public class LcdDensity {
 		final View entryView = factory.inflate(R.layout.input_dialog  , null);
 		final EditText edit = (EditText) entryView.findViewById(R.id.int_dpi);
 		String sct = ctx.getString(R.string.ScreenDPITitle) + String.format("(%d - %d)", MinDpi, MaxDpi);
-		
-		String lcdval = NativeCmd.ExecuteCmd(ctx, "cat " + AutoExec + "| " + ISTweakActivity.cmdGrep + " 'lcd_density\\s[1-3][0-9][0-9]'", true);
-		String lcd = lcdval.replace("${ROOTPATH}/lcd_density ", "");
+		String lcdval[] = NativeCmd.ExecCommand("cat " + AutoExec + "| " + ISTweakActivity.cmdGrep + " 'lcd_density\\s[1-3][0-9][0-9]'", true);
+		String lcd = lcdval[1].trim().replace("\n", "").replace("${ROOTPATH}/lcd_density ", "");
 		if ( ! lcd.matches("^[0-9]{3}$") ) {
 			lcd = MaxDpi.toString();
 		}
@@ -87,16 +90,16 @@ public class LcdDensity {
 	
 	private void ChangeDPI(Integer intDpi)
 	{
-		String ae = NativeCmd.ExecuteCmd(ctx, "cat " + AutoExec + "| " + ISTweakActivity.cmdGrep + " 'lcd_density'", true);
+		String[] ae = NativeCmd.ExecCommand("cat " + AutoExec + "| " + ISTweakActivity.cmdGrep + " 'lcd_density'", true);
 		String str_preg = (ISTweakActivity.Model.equals("IS03")) ? "[2-3]" : "[1-2]";
 		String dpicmd = "";
 		Log.d("ISTweak", "lcd_density" + ae.toString());
-		if (ae.indexOf("lcd_density") > 0) {
+		if (ae[1].trim().replace("\n", "").indexOf("lcd_density") > 0) {
 			dpicmd = ISTweakActivity.cmdSed + " -i 's/lcd_density " + str_preg + "[0-9][0-9]/lcd_density " + intDpi + "/' " + AutoExec;
 		} else {
 			File ff = new File(ctx.getDir("bin", 0), "lcd_density");
 			dpicmd = "echo '" + ff.getAbsolutePath() + " " + intDpi + "' >> " + AutoExec;
 		}
-		NativeCmd.runScript(ctx, dpicmd, true);
+		NativeCmd.ExecuteCommand(dpicmd, true);
 	}
 }

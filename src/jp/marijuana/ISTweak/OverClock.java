@@ -37,7 +37,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class OverClock extends Activity {
+public class OverClock extends Activity
+{
 	private HashMap<Integer, String> clockmap = new HashMap<Integer, String>();
 	private HashMap<Integer, String> vddmap = new HashMap<Integer, String>();
 	private final String scaling_min_freq = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq";
@@ -55,7 +56,8 @@ public class OverClock extends Activity {
 	private AlertDialog dlgVdd = null;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		mydir = this.getDir("bin", 0).getAbsolutePath();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.overclock);
@@ -113,7 +115,8 @@ public class OverClock extends Activity {
 	/**
 	 * VDDリスト
 	 */
-	private void showVddList() {
+	private void showVddList()
+	{
 		read_clock();
 		final ArrayList<String> rows = new ArrayList<String>();
 		Object[] key = vddmap.keySet().toArray();
@@ -150,7 +153,8 @@ public class OverClock extends Activity {
 	 * VDDダイアログ
 	 * @param i
 	 */
-	private void showVddDialog(int i) {
+	private void showVddDialog(int i)
+	{
 		LayoutInflater factory = LayoutInflater.from(getApplicationContext());
 		final View entryView = factory.inflate(R.layout.vdd_dialog  , null);
 		final EditText edit = (EditText) entryView.findViewById(R.id.int_vdd);
@@ -179,7 +183,8 @@ public class OverClock extends Activity {
 	 * ブロックデバイスの取得
 	 * @return
 	 */
-	private String getAllBlockDevice() {
+	private String getAllBlockDevice()
+	{
 		String path = "/sys/block";
 	    File dir = new File(path);
 	    File[] files = dir.listFiles();
@@ -208,15 +213,25 @@ public class OverClock extends Activity {
 	/**
 	 * 保存
 	 */
-	private void saveStat() {
+	private void saveStat()
+	{
+		String[] cmds = new String[4];
+		
+		cmds[0] = "echo " + String.valueOf(makeMinFreq()) + " > " + scaling_min_freq;
+		cmds[1] = "echo " + String.valueOf(makeMaxFreq()) + " > " + scaling_max_freq;
+		cmds[2] = "echo " + makeScaling() + " > " + scaling_governor;
+		cmds[3] = "";
+		
 		String cmd = "echo " + String.valueOf(makeMinFreq()) + " > " + scaling_min_freq + "\n" +
 					 "echo " + String.valueOf(makeMaxFreq()) + " > " + scaling_max_freq + "\n" +
 					 "echo " + makeScaling() + " > " + scaling_governor + "\n" +
 					 getAllBlockDevice() +
 				"";
-		String[] ret = NativeCmd.runScript(this, cmd, true);
-		if (ret[2].length() == 0) {
+		String[] ret = NativeCmd.ExecCommands(cmd.split("\n"), true);
+		if (ret[2].trim().replace("\n", "").length() == 0) {
 			Log.i("ISTweak", "set cpu freq and scaling");
+		} else {
+			Log.e("ISTweak", ret[2]);
 		}
 		
 		if (NativeCmd.ExecuteCmdAlert(this, "echo 3 > /proc/sys/vm/drop_caches", true)) {
@@ -255,7 +270,8 @@ public class OverClock extends Activity {
 	 * スケジューラー
 	 * @return
 	 */
-	private String makeScheduler() {
+	private String makeScheduler()
+	{
 		Spinner spinner = (Spinner) findViewById(6);
 		return (String) spinner.getSelectedItem();
 	}
@@ -264,7 +280,8 @@ public class OverClock extends Activity {
 	 * スケーリング
 	 * @return
 	 */
-	private String makeScaling() {
+	private String makeScaling()
+	{
 		Spinner spinner = (Spinner) findViewById(3);
 	 	return (String) spinner.getSelectedItem();
 	}
@@ -273,7 +290,8 @@ public class OverClock extends Activity {
 	 * 最小クロック
 	 * @return
 	 */
-	private int makeMinFreq() {
+	private int makeMinFreq()
+	{
 		Spinner spinner = (Spinner) findViewById(1);
 		String item = (String) spinner.getSelectedItem();
 		int min = 192000;
@@ -290,7 +308,8 @@ public class OverClock extends Activity {
 	 * 最大クロック
 	 * @return
 	 */
-	private int makeMaxFreq() {
+	private int makeMaxFreq()
+	{
 		Spinner spinner = (Spinner) findViewById(2);
 		String item = (String) spinner.getSelectedItem();
 		int max = 1152000;
@@ -307,7 +326,8 @@ public class OverClock extends Activity {
 	 * スケジューラー
 	 * @param layout
 	 */
-	private void makeSchedulerTray(LinearLayout layout) {
+	private void makeSchedulerTray(LinearLayout layout)
+	{
 		if ( NativeCmd.fileExists(scheduler) ) {
 			LinearLayout tray = new LinearLayout(this);
 			
@@ -345,7 +365,8 @@ public class OverClock extends Activity {
 	 * スケーリングリスト
 	 * @param layout
 	 */
-	private void makeScalingTray(LinearLayout layout) {
+	private void makeScalingTray(LinearLayout layout)
+	{
 		LinearLayout tray = new LinearLayout(this);
 		
 		TextView sctit = new TextView(this);
@@ -380,7 +401,8 @@ public class OverClock extends Activity {
 	 * クロックのリスト
 	 * @param layout
 	 */
-	private void makeClockTray(LinearLayout layout) {
+	private void makeClockTray(LinearLayout layout)
+	{
 		LinearLayout tray = new LinearLayout(this);
 		
 		ArrayAdapter<String> minadp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
@@ -434,7 +456,8 @@ public class OverClock extends Activity {
 	/**
 	 * vdd_levelsからクロックの一覧を読み込む
 	 */
-	private void read_clock() {
+	private void read_clock()
+	{
 	 	try {
 	 		FileReader fr = new FileReader(new File(vdd_levels));
 	 		BufferedReader br = new BufferedReader(fr);
@@ -462,7 +485,8 @@ public class OverClock extends Activity {
 	/**
 	 * VDDの保存
 	 */
-	private void saveVDD() {
+	private void saveVDD()
+	{
 	 	try {
 			final FileReader fr = new FileReader(new File(vdd_levels));
 			final BufferedReader br = new BufferedReader(fr);

@@ -24,12 +24,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class Market {
+public class Market
+{
 	private Context ctx;
 	private AlertDialog mCamouflage = null;
 	private final String db = "/data/data/com.google.android.gsf/databases/gservices.db";
 	
-	public static Button getButton(Context c) {
+	public static Button getButton(Context c)
+	{
 		Market ins = new Market(c);
 		return ins.makeButton();
 	}
@@ -38,7 +40,8 @@ public class Market {
 		ctx = c;
 	}
 	
-	private Button makeButton() {
+	private Button makeButton()
+	{
 		Button btn = new Button(ctx);
 		btn.setText(R.string.btn_Market);
 		btn.setOnClickListener(new OnClickListener(){
@@ -50,7 +53,8 @@ public class Market {
 		return btn;
 	}
 	
-	private void showMarketList() {
+	private void showMarketList()
+	{
 		final ArrayList<String> rows = new ArrayList<String>();
 		rows.add(ctx.getString(R.string.MARKET_AU));
 		rows.add(ctx.getString(R.string.MARKET_DOCOMO));
@@ -90,7 +94,7 @@ public class Market {
 						String cmd = "sqlite3 " + db + " \"insert into main (name,value) values('finsky.debug_options_enabled', 'true');\"\n" +
 								ISTweakActivity.cmdPkill + " -9 com.android.vending\n" +
 								"";
-						NativeCmd.runScript(ctx, cmd, true);
+						NativeCmd.ExecuteCommands(cmd.split("\n"), true);
 						MakeCarrierList();
 						ISTweakActivity.ctx.finish();
 					}
@@ -102,7 +106,7 @@ public class Market {
 						String cmd = "sqlite3 " + db + " \"delete from main where name = 'finsky.debug_options_enabled';\"\n" +
 								ISTweakActivity.cmdPkill + " -9 com.android.vending\n" +
 								"";
-						NativeCmd.runScript(ctx, cmd, true);
+						NativeCmd.ExecuteCommands(cmd.split("\n"), true);
 						ISTweakActivity.ctx.finish();
 					}
 				});
@@ -115,8 +119,8 @@ public class Market {
 	private boolean DebugCheck()
 	{
 		String cmd = "sqlite3 " + db + " \"select value from main where name = 'finsky.debug_options_enabled';\"";
-		String line = NativeCmd.ExecuteCmd(ctx, cmd, true);
-		return !(line.trim().replace("\n", "") == "");
+		String[] line = NativeCmd.ExecCommand(cmd, true);
+		return !(line[1].trim().replace("\n", "") == "");
 	}
 	
 	private void MakeCarrierList()
@@ -160,6 +164,6 @@ public class Market {
 			cmd += ff.getAbsolutePath() + " ro.cdma.home.operator.numeric \"" + marketid + "\"\n" +
 				   ff.getAbsolutePath() + " ro.cdma.home.operator.alpha \"" + alpha + "\"\n";
 		}
-		NativeCmd.runScript(ctx, cmd, true);
+		NativeCmd.ExecuteCommands(cmd.split("\n"), true);
 	}
 }

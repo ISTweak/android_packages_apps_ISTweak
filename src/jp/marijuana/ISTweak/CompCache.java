@@ -21,7 +21,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CompCache extends Activity {
+public class CompCache extends Activity
+{
 	private final LayoutParams lparm = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 	private final String swappiness = "/proc/sys/vm/swappiness";
 	private final String compsize = "/data/root/compsize";
@@ -30,7 +31,8 @@ public class CompCache extends Activity {
 	private String mydir = "";
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.overclock);
 		
@@ -56,7 +58,8 @@ public class CompCache extends Activity {
 	 * compcacheサイズ
 	 * @return
 	 */
-	private LinearLayout spinner_compsize() {
+	private LinearLayout spinner_compsize()
+	{
 		LinearLayout tray = new LinearLayout(this);
 		TextView sctit = new TextView(this);
 		sctit.setText(R.string.Str_Compsize);
@@ -103,7 +106,8 @@ public class CompCache extends Activity {
 	 * compcacheサイズ設定ボタン
 	 * @return
 	 */
-	private LinearLayout button_compsize() {
+	private LinearLayout button_compsize()
+	{
 		LinearLayout tray = new LinearLayout(this);
 		
 		Button btn = new Button(this);
@@ -128,7 +132,7 @@ public class CompCache extends Activity {
 			btnd.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					NativeCmd.ExecuteCmd(CompCache.this, "rm " + compsize, true);
+					NativeCmd.ExecuteCommand("rm " + compsize, true);
 				}
 			});
 			tray.addView(btnd, lparm);
@@ -140,7 +144,8 @@ public class CompCache extends Activity {
 	 * swappiness
 	 * @return
 	 */
-	private LinearLayout spinner_swappiness() {
+	private LinearLayout spinner_swappiness()
+	{
 		LinearLayout tray = new LinearLayout(this);
 		TextView sctit = new TextView(this);
 		sctit.setText(R.string.Str_Swappiness);
@@ -171,7 +176,8 @@ public class CompCache extends Activity {
 	 * swappinessの設定ボタン
 	 * @return
 	 */
-	private LinearLayout button_swappiness() {
+	private LinearLayout button_swappiness()
+	{
 		LinearLayout tray = new LinearLayout(this);
 		
 		//起動時有効
@@ -189,7 +195,7 @@ public class CompCache extends Activity {
 				Spinner spinner = (Spinner)findViewById(10);
 				String item = (String)spinner.getSelectedItem();
 				String cmd = "echo " + item + " > " + swappiness;
-				NativeCmd.ExecuteCmd(CompCache.this, cmd, true);
+				NativeCmd.ExecuteCommand(cmd, true);
 
 				CheckBox chkbox = (CheckBox) findViewById(4);
 				if (chkbox.isChecked()) {
@@ -211,7 +217,8 @@ public class CompCache extends Activity {
 	/**
 	 * 現在のパーセントを取得
 	 */
-	private int getCurrentSize() {
+	private int getCurrentSize()
+	{
 		int size = (int)Math.floor((double)swpsize / (double)memsize * 100);
 		return size;
 	}
@@ -219,17 +226,21 @@ public class CompCache extends Activity {
 	/**
 	 * トータルメモリ取得
 	 */
-	private String getMemSize() {
+	private String getMemSize()
+	{
 		String cmd = "cat /proc/meminfo | " + ISTweakActivity.cmdGrep + " MemTotal | " + ISTweakActivity.cmdSed + " -e \"s/.*\\:\\s*\\([0-9]*\\)\\s.*/\\1/g\"";
-	 	return NativeCmd.ExecuteCmd(this, cmd, true);
+	 	String[] ret = NativeCmd.ExecCommand(cmd, true);
+		return ret[1].trim().replace("\n", "");
 	}
 	
 	/**
 	 * スワップサイズ取得
 	 */
-	private String getSwapSize() {
+	private String getSwapSize()
+	{
 		String cmd = "cat /proc/meminfo | " + ISTweakActivity.cmdGrep + " SwapTotal | " + ISTweakActivity.cmdSed + " -e \"s/.*\\:\\s*\\([0-9]*\\)\\s.*/\\1/g\"";
-		return NativeCmd.ExecuteCmd(this, cmd, true);
+		String[] ret = NativeCmd.ExecCommand(cmd, true);
+		return ret[1].trim().replace("\n", "");
 	}
 	
 	/**
@@ -238,7 +249,8 @@ public class CompCache extends Activity {
 	 * @param i2
 	 * @return
 	 */
-	private boolean compInt(int i1, int i2) {
+	private boolean compInt(int i1, int i2)
+	{
 		if ( i1 == i2 ) {
 			return true;
 		}

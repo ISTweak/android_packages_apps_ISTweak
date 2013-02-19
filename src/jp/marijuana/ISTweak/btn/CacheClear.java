@@ -13,19 +13,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class CacheClear {
+public class CacheClear
+{
 	private Context ctx;
 	
-	public static Button getButton(Context c) {
+	public static Button getButton(Context c)
+	{
 		CacheClear ins = new CacheClear(c);
 		return ins.makeButton();
 	}
 	
-	private CacheClear(Context c) {
+	private CacheClear(Context c)
+	{
 		ctx = c;
 	}
 	
-	private Button makeButton() {
+	private Button makeButton()
+	{
 		Button btn = new Button(ctx);
 		btn.setText(R.string.btn_CacheClear);
 		btn.setOnClickListener(new OnClickListener(){
@@ -52,7 +56,7 @@ public class CacheClear {
 				if ( ISTweakActivity.Model.equals("IS11PT") ) {
 					cmd += ISTweakActivity.cmdRm + " -rf /data/bugreports/*" + "\n";
 				}
-				NativeCmd.runScript(ctx, cmd, true);
+				NativeCmd.ExecCommands(cmd.split("\n"), true);
 			}});
 		confirm.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener(){
 			@Override

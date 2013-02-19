@@ -15,20 +15,24 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class btnAppList {
+public class btnAppList
+{
 	private Context ctx;
 	private AlertDialog mDlg = null;
 	
-	public static Button getButton(Context c) {
+	public static Button getButton(Context c)
+	{
 		btnAppList ins = new btnAppList(c);
 		return ins.makeButton();
 	}
 	
-	private btnAppList(Context c) {
+	private btnAppList(Context c)
+	{
 		ctx = c;
 	}
 	
-	private Button makeButton() {
+	private Button makeButton()
+	{
 		Button btn = new Button(ctx);
 		btn.setText(R.string.btn_AppList);
 		btn.setOnClickListener(new OnClickListener(){

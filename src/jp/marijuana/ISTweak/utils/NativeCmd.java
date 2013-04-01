@@ -158,21 +158,35 @@ public class NativeCmd
 	 */
 	public static boolean ExecuteCmdAlert(Context ctx, String cmd, Boolean su)
 	{
-		String[] ret = new String[3];
+		String[] ret;
     	ret = NativeCmd.ExecCommand(cmd, su);
-    	
     	if ( ret[1].length() > 0 ) {
     		ISTweakActivity.alert(ctx, ret[1]);
     		Log.d("ISTweak", ret[1]);
     	}
+    	
     	if ( ret[2].length() > 0 ) {
     		ISTweakActivity.alert(ctx, ret[2]);
     		Log.e("ISTweak", ret[2]);
     		return false;
-    	} 
+    	}
     	return true;
 	}
 	
+	public static boolean ExecuteCmd(String cmd, Boolean su)
+	{
+		String[] ret;
+    	ret = NativeCmd.ExecCommand(cmd, su);
+    	if ( ret[1].length() > 0 ) {
+    		Log.d("ISTweak", ret[1]);
+    	}
+    	
+    	if ( ret[2].length() > 0 ) {
+    		Log.e("ISTweak", ret[2]);
+    		return false;
+    	}
+    	return true;
+	}
 	/**
 	 * 戻り値なしのコマンドを実行する
 	 * @param String　paramCommand
@@ -212,8 +226,6 @@ public class NativeCmd
 		}
 	}
 
-
-	
  	/**
 	 * ファイルを1行読み込み
 	 * @param fn ファイル名

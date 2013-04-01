@@ -111,8 +111,8 @@ public class ISTweakActivity extends Activity
 	 */
 	static public void DoEnableSu(Context ctx)
 	{
-		if (NativeCmd.ExecuteCmdAlert(ctx, "ln -s /sbin/au /sbin/su", true)) {
-			Toast.makeText(ctx.getApplicationContext(), ctx.getString(R.string.EnableSu), Toast.LENGTH_SHORT ).show();
+		if (NativeCmd.ExecuteCmd("ln -s /sbin/au /sbin/su", true)) {
+			Toast.makeText(ctx, ctx.getString(R.string.EnableSu), Toast.LENGTH_SHORT ).show();
 			Log.i("ISTweak", "Enable su");
 		}
 	}
@@ -123,8 +123,8 @@ public class ISTweakActivity extends Activity
 	 */
 	static public void DoDisableSu(Context ctx)
 	{
-		if (NativeCmd.ExecuteCmdAlert(ctx, "rm /sbin/su", true)) {
-			Toast.makeText(ctx.getApplicationContext(), ctx.getString(R.string.DisableSu), Toast.LENGTH_SHORT ).show();
+		if (NativeCmd.ExecuteCmd("rm /sbin/su", true)) {
+			Toast.makeText(ctx, ctx.getString(R.string.DisableSu), Toast.LENGTH_SHORT ).show();
 			Log.i("ISTweak", "Disable su");
 		}
 	}
@@ -140,7 +140,7 @@ public class ISTweakActivity extends Activity
 			btnsu.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					DoDisableSu(getApplicationContext());
+					DoDisableSu(ISTweakActivity.ctx);
 					UpdateWidget();
 					ISTweakActivity.this.finish();
 				}
@@ -150,7 +150,7 @@ public class ISTweakActivity extends Activity
 			btnsu.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					DoEnableSu(getApplicationContext());
+					DoEnableSu(ISTweakActivity.ctx);
 					UpdateWidget();
 					ISTweakActivity.this.finish();
 				}
